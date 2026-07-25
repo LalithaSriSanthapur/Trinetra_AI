@@ -1,0 +1,205 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "507d9e67-ec93-42ac-afa3-e464adbf050d",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        -16
+      ],
+      "id": "340caf91-e623-4614-b80c-1cbc7f78fd5a",
+      "name": "Webhook",
+      "webhookId": "507d9e67-ec93-42ac-afa3-e464adbf050d"
+    },
+    {
+      "parameters": {
+        "sendTo": "lalitha287sri@gmail.com",
+        "subject": "🚨 Emergency Alert - Fire Detected",
+        "message": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        128
+      ],
+      "id": "78bb3056-bbdf-452a-84e7-1cb0d2e67986",
+      "name": "Send a message",
+      "webhookId": "820a6ef1-20ae-4cb0-a43f-7b0189953b53",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "HugJKGqFixblPKoJ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Create a professional emergency incident report.\n\nUse this format:\n\n<h2>🚨 Emergency Incident Report</h2>\n\n<h3>📌 Incident Details</h3>\n<ul>\n<li>Incident ID:</li>\n<li>Date & Time:</li>\n<li>Location:</li>\n<li>Alert Type:</li>\n<li>Severity Level:</li>\n</ul>\n\n<h3>🔥 Situation Summary</h3>\n<ul>\n<li>Brief summary of the incident.</li>\n</ul>\n\n<h3>⚠️ Immediate Actions Required</h3>\n<ul>\n<li>Important emergency action.</li>\n<li>Important emergency action.</li>\n<li>Important emergency action.</li>\n</ul>\n\n<h3>📋 Recommended Next Steps</h3>\n<ul>\n<li>Next step.</li>\n<li>Next step.</li>\n</ul>\n\nAI Analysis:\n{{ $json.text }}\n\nAlert:\n{{ $('Webhook').item.json.body.alert }}\n\nLocation:\n{{ $('Webhook').item.json.body.location }}\n\nSeverity:\n{{ $('Webhook').item.json.body.severity }}\n\nRules:\n- Use only short bullet points.\n- No paragraphs.\n- Keep under 200 words.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        368,
+        -128
+      ],
+      "id": "eade676e-e3b7-4f15-9ab9-d333bb445319",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8e8a8d1f-102b-4e69-899f-76beae95e9fd",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "HIGH",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        112,
+        -144
+      ],
+      "id": "99020599-2671-4a5c-af90-60a8a6dd0d06",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze this emergency alert and provide the severity level and immediate action required.\n\nAlert: {{ $json.body.alert }}\n\nLocation: {{ $json.body.location }}\n\nSeverity: {{ $json.body.severity }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -176,
+        -384
+      ],
+      "id": "c55814ba-ae53-4c8b-ab0c-0b4a8f7f0d24",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        544,
+        48
+      ],
+      "id": "64d50d05-1bf9-4bfd-9b09-afa3f4e92d38",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "kZIjXeoXgzNjLLDC",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e2a6edee-efc5-47dd-a0a5-61b8255fcc7c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "28b11be0be7acb3a953e46d4951847e7705aa7ed7fcd97b5ff7884b285da7eaf"
+  },
+  "nodeGroups": [],
+  "id": "WOmh0l9rS82U90As",
+  "tags": []
+}
