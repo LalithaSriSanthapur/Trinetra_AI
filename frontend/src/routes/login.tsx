@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { loginUser } from "../api/auth";
 import { AnimatedBackground } from "@/components/site/AnimatedBackground";
 import { Logo } from "@/components/site/Logo";
 import { Mail, Lock, ArrowRight, Github } from "lucide-react";
@@ -17,6 +19,20 @@ export const Route = createFileRoute("/login")({
 });
 
 function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = await loginUser({ username: email, password });
+      console.log("Logged in:", data);
+      alert("Login successful!");
+    } catch (err) {
+      alert("Login failed");
+    }
+  };
+
   return (
     <>
       <AnimatedBackground />
@@ -41,16 +57,28 @@ function LoginPage() {
             <h1 className="text-2xl font-display font-bold text-white">Welcome back.</h1>
             <p className="mt-1.5 text-sm text-white/55">Sign in to your safety console.</p>
 
-            <form onSubmit={(e) => e.preventDefault()} className="mt-8 space-y-4">
-              <FieldIcon icon={Mail} placeholder="you@district.edu" type="email" />
-              <FieldIcon icon={Lock} placeholder="Password" type="password" />
+            <form onSubmit={handleLogin} className="mt-8 space-y-4">
+              <FieldIcon 
+                icon={Mail} 
+                placeholder="you@district.edu" 
+                type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <FieldIcon 
+                icon={Lock} 
+                placeholder="Password" 
+                type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
               <div className="flex items-center justify-between text-xs">
                 <label className="flex items-center gap-2 text-white/60">
                   <input type="checkbox" className="rounded border-white/20 bg-white/5 accent-cyan" /> Remember me
                 </label>
                 <a href="#" className="text-cyan hover:underline">Forgot password?</a>
               </div>
-              <button className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground btn-glow">
+              <button type="submit" className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-primary-foreground btn-glow">
                 Sign in <ArrowRight className="w-4 h-4" />
               </button>
             </form>

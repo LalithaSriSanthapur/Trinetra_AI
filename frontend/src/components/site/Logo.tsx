@@ -1,4 +1,3 @@
-import logoAsset from "@/assets/trinetraai-logo.png.asset.json";
 import { Link } from "@tanstack/react-router";
 
 export function Logo({ size = 36, showText = true }: { size?: number; showText?: boolean }) {
@@ -8,7 +7,7 @@ export function Logo({ size = 36, showText = true }: { size?: number; showText?:
         className="relative rounded-xl overflow-hidden ring-1 ring-white/10 shrink-0 transition-transform group-hover:scale-105"
         style={{ width: size, height: size }}
       >
-        <img src={logoAsset.url} alt="TrinetraAI logo" className="w-full h-full object-cover" />
+        <img src="/trinetraai-logo.png" alt="TrinetraAI logo" className="w-full h-full object-cover" />
       </div>
       {showText && (
         <div className="flex flex-col leading-none">

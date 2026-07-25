@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from routes.incidents import router as incident_router
 from routes.cameras import router as camera_router
 from routes.auth import router as auth_router
+from routes.schools import router as school_router
+from routes.users import router as user_router
 
 app = FastAPI()
 
@@ -14,3 +16,5 @@ def home():
 app.include_router(incident_router)
 app.include_router(camera_router)
 app.include_router(auth_router)
+app.include_router(school_router)
+app.include_router(user_router)
