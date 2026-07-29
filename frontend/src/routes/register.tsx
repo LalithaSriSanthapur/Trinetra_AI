@@ -47,7 +47,7 @@ function RegisterPage() {
             <h1 className="text-2xl font-display font-bold text-white">Create your account.</h1>
             <p className="mt-1.5 text-sm text-white/55">Get access to the TrinetraAI safety console.</p>
 
-            <form onSubmit={(e) => e.preventDefault()} className="mt-8 space-y-4">
+            <form onSubmit={(e) => { e.preventDefault(); window.location.href = '/'; }} className="mt-8 space-y-4">
               <FieldIcon icon={User} placeholder="Full name" />
               <FieldIcon icon={Building2} placeholder="District / organization" />
               <FieldIcon icon={Mail} placeholder="Work email" type="email" />

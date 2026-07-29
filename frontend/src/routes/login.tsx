@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { loginUser } from "../api/auth";
 import { AnimatedBackground } from "@/components/site/AnimatedBackground";
 import { Logo } from "@/components/site/Logo";
 import { Mail, Lock, ArrowRight, Github } from "lucide-react";
@@ -24,13 +23,7 @@ function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const data = await loginUser({ username: email, password });
-      console.log("Logged in:", data);
-      alert("Login successful!");
-    } catch (err) {
-      alert("Login failed");
-    }
+    window.location.href = '/';
   };
 
   return (
@@ -87,10 +80,10 @@ function LoginPage() {
               <div className="h-px flex-1 bg-white/10"/> or <div className="h-px flex-1 bg-white/10"/>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white hover:bg-white/10">
+              <button type="button" onClick={() => window.location.href = '/'} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white hover:bg-white/10">
                 <span className="text-cyan">G</span> Google
               </button>
-              <button className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white hover:bg-white/10">
+              <button type="button" onClick={() => window.location.href = '/'} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white hover:bg-white/10">
                 <Github className="w-4 h-4"/> SSO
               </button>
             </div>
