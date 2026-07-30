@@ -1,0 +1,38 @@
+# Local development stack: Postgres + backend API.
+# Run: docker compose up --build
+# Frontend and the AI model are run separately (see DEPLOYMENT.md) since the
+# frontend is best served by its own Node/Vite tooling and the AI model
+# needs access to a camera/video source or GPU that varies per machine.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: trinetra_ai
+    ports:
+      - "5432:5432"
+    volumes:
+      - trinetra_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/trinetra_ai
+      JWT_SECRET: local-dev-secret
+      CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "8000:8000"
+
+volumes:
+  trinetra_pgdata:
